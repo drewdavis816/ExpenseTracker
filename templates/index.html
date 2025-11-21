@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .expenses-list {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .expense-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+        .expense-info {
+            flex: 1;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>💰 Expense Tracker</h1>
+
+    <form method="POST" action="/add">
+        <h2>Add New Expense</h2>
+        <input type="number" name="amount" step="0.01" placeholder="Amount (e.g., 12.50)" required>
+        <select name="category" required>
+            <option value="">Select Category</option>
+            <option value="food">Food</option>
+            <option value="transport">Transport</option>
+            <option value="bills">Bills</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="other">Other</option>
+        </select>
+        <textarea name="note" placeholder="Optional note"></textarea>
+        <button type="submit">Add Expense</button>
+    </form>
+
+    <div class="expenses-list">
+        <h2>📋 All Expenses</h2>
+                <div style="margin-bottom: 15px;">
+            <a href="/all" style="margin-right: 10px; text-decoration: none; color: #333; font-weight: bold;">All</a>
+            <a href="/filter/food" style="margin-right: 10px; text-decoration: none; color: #333;">Food</a>
+            <a href="/filter/transport" style="margin-right: 10px; text-decoration: none; color: #333;">Transport</a>
+            <a href="/filter/bills" style="margin-right: 10px; text-decoration: none; color: #333;">Bills</a>
+            <a href="/filter/entertainment" style="margin-right: 10px; text-decoration: none; color: #333;">Entertainment</a>
+            <a href="/filter/other" style="text-decoration: none; color: #333;">Other</a>
+                </div>
+        {% if expenses %}
+            {% for expense in expenses %}
+                <div class="expense-item">
+                    <div class="expense-info">
+                        <strong>${{ "%.2f"|format(expense.amount) }}</strong> - {{ expense.category }}
+                        {% if expense.note %}
+                            <em>({{ expense.note }})</em>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="/delete/{{ loop.index0 }}" style="display:inline;">
+                        <button type="submit" style="background-color: #f44336; width: auto; padding: 5px 10px; margin: 0;">Delete</button>
+                    </form>
+                </div>
+            {% endfor %}
+            <div class="total">
+                Total: ${{ "%.2f"|format(total) }}
+            </div>
+        {% else %}
+            <p>No expenses yet. Add one above!</p>
+        {% endif %}
+    </div>
+</body>
+</html>
